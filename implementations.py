@@ -1,125 +1,156 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from video.base import (
     VideoBase,
     VideoStatus,
     VideoVisibility
 )
-class StandardVideo(VideoBase): # Klasik, önceden kaydedilmiş videoları temsil eder.
-    
-    def __init__(self, channel_id, title, duration_seconds, resolution = "1080p", has_subtitles = False, visibility):
+
+
+class StandardVideo(VideoBase): # Klasik, önceden kaydedilmiş videolar.
+
+    def __init__(
+        self,
+        channel_id: str,
+        title: str,
+        duration_seconds: int,
+        visibility: VideoVisibility,
+        resolution: str = "1080p",
+        has_subtitles: bool = False
+    ):
         super().__init__(
-            self.channel_id = channel_id,
-            self.title = title,
-            self.duration_seconds = duration_seconds,
-            self.visibility = visibility
+            video_id=VideoBase.generate_video_id(),
+            channel_id=channel_id,
+            title=title,
+            duration_seconds=duration_seconds,
+            visibility=visibility,
+            status=VideoStatus.uploaded
         )
+
         self.resolution = resolution
         self.has_subtitles = has_subtitles
         self.last_watched_at: Optional[datetime] = None
 
-        # ========== ABSTRACT METHOD OVERRIDE ==========
+    # ========== ABSTRACT METHOD OVERRIDE ==========
 
-    def get_video_type(self):
+    def get_video_type(self) -> str:
         return "StandardVideo"
 
-    def validate_duration(self): # Standard videolar için süre en az 10 saniye olmalı.
+    def validate_duration(self) -> bool:
         return self.duration_seconds >= 10
 
-        # ========== KENDİNE ÖZGÜ METOTLAR ==========
-    
-    def mark_watched(self): # Videonun izlendiği zamanı kaydeder.
+    # ========== KENDİNE ÖZGÜ METOTLAR ==========
+
+    def mark_watched(self) -> None:
         self.last_watched_at = datetime.now()
 
-    def enable_subtitles(self):
+    def enable_subtitles(self) -> None:
         self.has_subtitles = True
 
-    def disable_subtitles(self):
+    def disable_subtitles(self) -> None:
         self.has_subtitles = False
 
-class LiveStreamVideo(VideoBase): # Canlı yayın videolarını temsil eder.
-  
-    def __init__(self, channel_id, title, scheduled_time: Optional[datetime] = None, visibility):
+
+class LiveStreamVideo(VideoBase): # Canlı yayın videoları.
+
+    def __init__(
+        self,
+        channel_id: str,
+        title: str,
+        visibility: VideoVisibility,
+        scheduled_time: Optional[datetime] = None
+    ):
         super().__init__(
-            self.channel_id = channel_id,
-            self.title = title,
-            self.duration_seconds = 0,
-            self.visibility = visibility
+            video_id=VideoBase.generate_video_id(),
+            channel_id=channel_id,
+            title=title,
+            duration_seconds=0,
+            visibility=visibility,
+            status=VideoStatus.uploaded
         )
-        self.scheduled_time: Optional[datetime] = scheduled_time
+
+        self.scheduled_time = scheduled_time
         self.is_live = False
         self.started_at: Optional[datetime] = None
         self.ended_at: Optional[datetime] = None
 
- # ========== ABSTRACT METHOD OVERRIDE ==========
+    # ========== ABSTRACT METHOD OVERRIDE ==========
 
-    def get_video_type(self):
+    def get_video_type(self) -> str:
         return "LiveStreamVideo"
 
-    def validate_duration(self): # Canlı yayınlarda başlangıçta süre kontrolü yapılmaz.
+    def validate_duration(self) -> bool:
         return True
 
     # ========== KENDİNE ÖZGÜ METOTLAR ==========
 
-    def start_stream(self): # Canlı yayını başlatır.
-
+    def start_stream(self) -> None:
         if not self.is_live:
-               self.is_live = True
-               self.started_at = datetime.now()
-               self.status = VideoStatus.published
+            self.is_live = True
+            self.started_at = datetime.now()
+            self.status = VideoStatus.published
 
-    def end_stream(self, final_duration): # Canlı yayını bitirir ve süreyi kaydeder.
-    
+    def end_stream(self, final_duration: int) -> None:
         if self.is_live:
-           self.is_live = False
-           self.ended_at = datetime.now()
-           self.duration_seconds = final_duration
-           self.status = VideoStatus.processing
+            self.is_live = False
+            self.ended_at = datetime.now()
+            self.duration_seconds = final_duration
+            self.status = VideoStatus.processing
 
-    def is_scheduled(self):
-        return self.scheduled_time is not None # Canlı yayın planlanmış mı boolean kontrol yapar.
+    def is_scheduled(self) -> bool:
+        return self.scheduled_time is not None
 
-class ShortVideo(VideoBase): # Kısa, dikey formatlı videoları temsil eder (Shorts).
+
+class ShortVideo(VideoBase): # Shorts videolar.
     
     MAX_DURATION = 60
 
-    def __init__(self, channel_id, title, duration_seconds, is_vertical = True, music_used = False, visibility):
+    def __init__(
+        self,
+        channel_id: str,
+        title: str,
+        duration_seconds: int,
+        visibility: VideoVisibility,
+        is_vertical: bool = True,
+        music_used: bool = False
+    ):
         super().__init__(
-            self.channel_id = channel_id,
-            self.title = title,
-            self.duration_seconds = duration_seconds,
-            self.visibility = visibility
+            video_id=VideoBase.generate_video_id(),
+            channel_id=channel_id,
+            title=title,
+            duration_seconds=duration_seconds,
+            visibility=visibility,
+            status=VideoStatus.uploaded
         )
+
         self.is_vertical = is_vertical
-        self.music_used: = music_used
-        self.loop_count  = 0
+        self.music_used = music_used
+        self.loop_count = 0
 
     # ========== ABSTRACT METHOD OVERRIDE ==========
 
-    def get_video_type(self):
+    def get_video_type(self) -> str:
         return "ShortVideo"
 
-    def validate_duration(self): # Short videolar maksimum 60 saniye olabilir.
-    
+    def validate_duration(self) -> bool:
         return 0 < self.duration_seconds <= self.MAX_DURATION
 
     # ========== KENDİNE ÖZGÜ METOTLAR ==========
 
-    def increment_loop(self): # Video her döngüye girdiğinde sayacı artırır.
-
+    def increment_loop(self) -> None:
         self.loop_count += 1
 
-    def uses_music(self):
+    def uses_music(self) -> bool:
         return self.music_used
 
-    def is_valid_short(self): # Hem süre hem format açısından short olup olmadığını kontrol eder.
+    def is_valid_short(self) -> bool:
         return self.is_vertical and self.validate_duration()
 
-    def validate_all_videos(videos: list[VideoBase]) -> list[VideoBase]: # Farklı video türlerini tek listede alır,
-                                                                         # abstract method'lar sayesinde polimorfik çalışır.
-       valid_videos = []
-       for video in videos:
+    @staticmethod
+    def validate_all_videos(videos: List[VideoBase]) -> List[VideoBase]:
+        valid_videos = []
+        for video in videos:
             if video.validate_duration():
-              valid_videos.append(video)
-       return valid_videos
+                valid_videos.append(video)
+        return valid_videos

@@ -36,7 +36,7 @@ class VideoRepository: # VideoRepository, video nesnelerinin tutulduğu ve sorgu
 
     # KANAL BAZLI FİLTRELER
 
-    def find_by_channel(self, channel_id: str) -> List[VideoBase]: # Belirli bir kanala ait tüm videoları listeler.
+    def find_by_channel(self, channel_id: str) -> List[VideoBase]: # Belirli bir kanaldaki tüm videoları listeler.
         
         return [
             video for video in self._videos
@@ -52,7 +52,7 @@ class VideoRepository: # VideoRepository, video nesnelerinin tutulduğu ve sorgu
             if video.status == status
         ]
 
-    def find_published(self) -> List[VideoBase]: # Yayında olan videoları listeler.
+    def find_published(self) -> List[VideoBase]: # Yayındaki videoları listeler.
      
         return self.find_by_status(VideoStatus.PUBLISHED)
 
@@ -60,4 +60,14 @@ class VideoRepository: # VideoRepository, video nesnelerinin tutulduğu ve sorgu
         
         return self.find_by_status(VideoStatus.BLOCKED)
 
+    # VISIBILITY BAZLI FİLTRELER
     
+    def find_by_visibility(
+        self,
+        visibility: VideoVisibility
+    ) -> List[VideoBase]: # Görünürlük tipine göre video listelemesi yapar.
+        
+        return [
+            video for video in self._videos
+            if video.visibility == visibility
+        ]

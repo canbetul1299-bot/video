@@ -93,3 +93,32 @@ class VideoRepository: # VideoRepository, video nesnelerinin tutulduğu ve sorgu
             video for video in self._videos
             if start_date <= video.upload_date <= end_date
         ]
+    
+    def filter(  # Filtreleme yapar.
+        self,
+        channel_id: Optional[str] = None,
+        status: Optional[VideoStatus] = None,
+        visibility: Optional[VideoVisibility] = None
+    ) -> List[VideoBase]:
+        
+        result = self._videos
+
+        if channel_id is not None:
+            result = [
+                v for v in result
+                if v.channel_id == channel_id
+            ]
+
+        if status is not None:
+            result = [
+                v for v in result
+                if v.status == status
+            ]
+
+        if visibility is not None:
+            result = [
+                v for v in result
+                if v.visibility == visibility
+            ]
+
+        return result

@@ -7,9 +7,7 @@ from video.base import (
     VideoVisibility
 )
 
-
-class StandardVideo(VideoBase):
-    """Klasik, önceden kaydedilmiş videolar"""
+class StandardVideo(VideoBase): # Klasik, önceden kaydedilmiş videolar.
 
     def __init__(
         self,
@@ -53,8 +51,7 @@ class StandardVideo(VideoBase):
         self.has_subtitles = False
 
 
-class LiveStreamVideo(VideoBase):
-    """Canlı yayın videoları"""
+class LiveStreamVideo(VideoBase): # Canlı yayın videoları.
 
     def __init__(
         self,
@@ -104,9 +101,8 @@ class LiveStreamVideo(VideoBase):
         return self.scheduled_time is not None
 
 
-class ShortVideo(VideoBase):
-    """Shorts videolar"""
-
+class ShortVideo(VideoBase): # Shorts videolar.
+    
     MAX_DURATION = 60
 
     def __init__(

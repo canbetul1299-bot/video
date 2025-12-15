@@ -72,7 +72,4 @@ class VideoBase(ABC):
             f"title='{self.title}' | "
             f"status={self.status}>"
        )
-<<<<<<< HEAD
- 
-=======
->>>>>>> 9ad9038e200d564e0cd5dd8f6245309373525ff4
+

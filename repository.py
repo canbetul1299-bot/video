@@ -71,3 +71,25 @@ class VideoRepository: # VideoRepository, video nesnelerinin tutulduğu ve sorgu
             video for video in self._videos
             if video.visibility == visibility
         ]
+    def find_public_videos(self) -> List[VideoBase]: # Sadece public videoları çalıştırır.
+    
+        return self.find_by_visibility(VideoVisibility.PUBLIC)
+    
+    # TARİH BAZLI FİLTRELER
+
+    def find_uploaded_after(self, date: datetime) -> List[VideoBase]: # Belirli bir tarihten sonra yüklenen videoları çalıştırır.
+        
+        return [
+            video for video in self._videos
+            if video.upload_date >= date
+        ]
+    def find_uploaded_between(
+        self,
+        start_date: datetime,
+        end_date: datetime
+    ) -> List[VideoBase]: #  Tarihler arasında yüklenen videoları çalıştırır.
+        
+        return [
+            video for video in self._videos
+            if start_date <= video.upload_date <= end_date
+        ]

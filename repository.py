@@ -10,7 +10,6 @@ class VideoRepository: # VideoRepository, video nesnelerinin tutulduğu ve sorgu
     def __init__(self):
         self._videos: List[VideoBase] = []
 
-    # CRUD BENZERİ METOTLAR
    
     def save(self, video: VideoBase) -> None: # Yeni bir video kaydeder.
         self._videos.append(video)
@@ -34,7 +33,7 @@ class VideoRepository: # VideoRepository, video nesnelerinin tutulduğu ve sorgu
         
         return list(self._videos)
 
-    # KANAL BAZLI FİLTRELER
+   
 
     def find_by_channel(self, channel_id: str) -> List[VideoBase]: # Belirli bir kanaldaki tüm videoları listeler.
         
@@ -43,7 +42,7 @@ class VideoRepository: # VideoRepository, video nesnelerinin tutulduğu ve sorgu
             if video.channel_id == channel_id
         ]
 
-    # STATUS BAZLI FİLTRELER
+   
 
     def find_by_status(self, status: VideoStatus) -> List[VideoBase]: # Belirli bir statüdeki videoları listeler.
         
@@ -60,7 +59,7 @@ class VideoRepository: # VideoRepository, video nesnelerinin tutulduğu ve sorgu
         
         return self.find_by_status(VideoStatus.BLOCKED)
 
-    # VISIBILITY BAZLI FİLTRELER
+
     
     def find_by_visibility(
         self,
@@ -75,7 +74,7 @@ class VideoRepository: # VideoRepository, video nesnelerinin tutulduğu ve sorgu
     
         return self.find_by_visibility(VideoVisibility.PUBLIC)
     
-    # TARİH BAZLI FİLTRELER
+
 
     def find_uploaded_after(self, date: datetime) -> List[VideoBase]: # Belirli bir tarihten sonra yüklenen videoları çalıştırır.
         
@@ -122,3 +121,15 @@ class VideoRepository: # VideoRepository, video nesnelerinin tutulduğu ve sorgu
             ]
 
         return result
+    
+    def count(self) -> int: # Sistemdeki toplam video sayısını döndürür.
+  
+        return len(self._videos)
+
+    def clear(self) -> None: # İçeriği temizler
+       
+        self._videos.clear()
+
+    def exists(self, video_id: str) -> bool: # Video sistemde var mı?
+        
+        return self.find_by_id(video_id) is not None

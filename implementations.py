@@ -1,10 +1,10 @@
 from datetime import datetime
 from typing import Optional, List
 
-from video.base import (
-    VideoBase,
-    VideoStatus,
-    VideoVisibility
+from Video.base import (
+     VideoBase,
+     VideoStatus,
+     VideoVisibility
 )
 
 class StandardVideo(VideoBase): # Klasik, önceden kaydedilmiş videolar.
@@ -31,7 +31,7 @@ class StandardVideo(VideoBase): # Klasik, önceden kaydedilmiş videolar.
         self.has_subtitles = has_subtitles
         self.last_watched_at: Optional[datetime] = None
 
-    # ========== ABSTRACT METHOD OVERRIDE ==========
+   
 
     def get_video_type(self) -> str:
         return "StandardVideo"
@@ -39,7 +39,7 @@ class StandardVideo(VideoBase): # Klasik, önceden kaydedilmiş videolar.
     def validate_duration(self) -> bool:
         return self.duration_seconds >= 10
 
-    # ========== KENDİNE ÖZGÜ METOTLAR ==========
+   
 
     def mark_watched(self) -> None:
         self.last_watched_at = datetime.now()
@@ -74,15 +74,14 @@ class LiveStreamVideo(VideoBase): # Canlı yayın videoları.
         self.started_at: Optional[datetime] = None
         self.ended_at: Optional[datetime] = None
 
-    # ========== ABSTRACT METHOD OVERRIDE ==========
-
+    
     def get_video_type(self) -> str:
         return "LiveStreamVideo"
 
     def validate_duration(self) -> bool:
         return True
 
-    # ========== KENDİNE ÖZGÜ METOTLAR ==========
+    
 
     def start_stream(self) -> None:
         if not self.is_live:
@@ -127,7 +126,7 @@ class ShortVideo(VideoBase): # Shorts videolar.
         self.music_used = music_used
         self.loop_count = 0
 
-    # ========== ABSTRACT METHOD OVERRIDE ==========
+   
 
     def get_video_type(self) -> str:
         return "ShortVideo"
@@ -135,7 +134,7 @@ class ShortVideo(VideoBase): # Shorts videolar.
     def validate_duration(self) -> bool:
         return 0 < self.duration_seconds <= self.MAX_DURATION
 
-    # ========== KENDİNE ÖZGÜ METOTLAR ==========
+  
 
     def increment_loop(self) -> None:
         self.loop_count += 1

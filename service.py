@@ -48,3 +48,11 @@ class VideoService: # Veri yönetme ve kuralları içerir.
         
         video = self._get_video_or_raise(video_id)
         video.block()
+    
+    def list_videos_by_channel(self, channel_id: str) -> List[VideoBase]: # Kanaldaki video listeleme.
+        
+        return self.repository.find_by_channel(channel_id)
+
+    def list_public_videos(self) -> List[VideoBase]: # Public video listeleme.
+       
+        return self.repository.find_public_videos()

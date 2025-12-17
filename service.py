@@ -56,3 +56,28 @@ class VideoService: # Veri yönetme ve kuralları içerir.
     def list_public_videos(self) -> List[VideoBase]: # Public video listeleme.
        
         return self.repository.find_public_videos()
+    
+    def list_videos_by_visibility(
+        self,
+        visibility: VideoVisibility
+    ) -> List[VideoBase]:  # Görünürlüğüne göre listeleme.
+       
+        return self.repository.find_by_visibility(visibility)
+
+    def list_videos_by_status(
+        self,
+        status: VideoStatus
+    ) -> List[VideoBase]: # Statüye göre listeleme.
+       
+        return self.repository.find_by_status(status)
+
+    def list_videos_by_date_range(
+        self,
+        start_date: datetime,
+        end_date: datetime
+    ) -> List[VideoBase]: # Tarih aralığında yüklenen videoları listeleme.
+        
+        return self.repository.find_uploaded_between(
+            start_date=start_date,
+            end_date=end_date
+        )

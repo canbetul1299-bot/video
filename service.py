@@ -81,3 +81,21 @@ class VideoService: # Veri yönetme ve kuralları içerir.
             start_date=start_date,
             end_date=end_date
         )
+    
+    def list_published_public_videos(
+        self,
+        channel_id: str | None = None
+    ) -> List[VideoBase]: # Public yayınlananlaı listeler.
+        
+        return self.repository.filter(
+            channel_id=channel_id,
+            status=VideoStatus.PUBLISHED,
+            visibility=VideoVisibility.PUBLIC
+        )
+
+    def _get_video_or_raise(self, video_id: str) -> VideoBase: # Video yoksa hata..
+        
+        video = self.repository.find_by_id(video_id)
+        if not video:
+            raise LookupError("Video bulunamadı")
+        return video

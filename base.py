@@ -101,11 +101,11 @@ class VideoBase(ABC):
 
     @abstractmethod
     def get_video_type(self) -> str:
-        ...
+        pass
 
     @abstractmethod
     def validate_specific_rules(self) -> bool:
-        ...
+        pass
 
     def is_valid(self) -> bool:
         return self.validate_duration() and self.validate_specific_rules()

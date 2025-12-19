@@ -2,93 +2,98 @@
 
 from datetime import datetime, timedelta
 
-from video.base import VideoVisibility, VideoStatus
-from video.implementations import (
-    StandardVideo,
-    LiveStreamVideo,
-    ShortVideo
-)
 from video.repository import VideoRepository
 from video.services import VideoService
+from video.implementations import StandardVideo, ShortVideo, LiveStreamVideo
+from video.base import VideoVisibility, VideoStatus
 
 
-def print_video_list(title: str, videos: list):
-    print(f"\n--- {title} ---")
-    for video in videos:
-        print(video)
+def print_videos(title, videos):
+    print("\n" + title)
+    for v in videos:
+        print(v)
 
 
 def main():
-   
     repository = VideoRepository()
     service = VideoService(repository)
 
-    standard_video = StandardVideo(
+    video1 = StandardVideo(
         channel_id="channel_1",
-        title="Python OOP Dersi",
+        title="Python OOP Dersleri",
         duration_seconds=900,
         has_subtitles=True
     )
 
-    short_video = ShortVideo(
+    video2 = ShortVideo(
         channel_id="channel_1",
-        title="Python Short İpucu",
+        title="Python İpucu",
         duration_seconds=45,
         music_used=True
     )
 
-    live_video = LiveStreamVideo(
+    video3 = LiveStreamVideo(
         channel_id="channel_2",
-        title="Canli Python Yayini",
-        scheduled_time=datetime.now() + timedelta(hours=2)
+        title="Canlı Python Yayını",
+        scheduled_time=datetime.now() + timedelta(hours=1)
     )
 
-    service.upload_video(standard_video)
-    service.upload_video(short_video)
-    service.upload_video(live_video)
-    
+    service.upload_video(video1)
+    service.upload_video(video2)
+    service.upload_video(video3)
 
-    service.process_and_publish(standard_video.video_id)
-    service.process_and_publish(short_video.video_id)
+    service.process_and_publish(video1.video_id)
+    service.process_and_publish(video2.video_id)
 
-    live_video.start_stream()
+    video3.start_stream()
+    video3.increase_viewers(120)
+    video3.disable_chat()
 
-    all_videos = repository.find_all()
+    service.add_tag(video1.video_id, "python")
+    service.add_tag(video1.video_id, "oop")
+    service.add_tag(video2.video_id, "shorts")
 
-    print_video_list(
-        "Tüm Videolar (Polimorfik Liste)",
-        all_videos
-    )
+    service.mark_video_watched(video1.video_id)
+    service.mark_video_watched(video2.video_id)
 
-    print_video_list(
-        "Yayindaki Videolar",
-        service.list_videos_by_status(VideoStatus.PUBLISHED)
-    )
-
-    print_video_list(
-        "Public Videolar",
-        service.list_public_videos()
-    )
-
-    print_video_list(
-        "Channel 1 Videoları",
-        service.list_videos_by_channel("channel_1")
-    )
-
+    print_videos("Tum Videolar", service.list_all())
+    print_videos("Public Videolar", service.list_public())
+    print_videos("Yayindaki Videolar", service.list_by_status(VideoStatus.PUBLISHED))
+    print_videos("Channel 1 Videolari", service.list_by_channel("channel_1"))
 
     start = datetime.now() - timedelta(days=1)
     end = datetime.now() + timedelta(days=1)
 
-    print_video_list(
-        "Bugün Yüklenen Videolar",
-        service.list_videos_by_date_range(start, end)
+    print_videos(
+        "Bugun Yuklenen Videolar",
+        service.list_uploaded_between(start, end)
     )
 
-    service.block_video(short_video.video_id)
+    service.block_video(video2.video_id)
 
-    print_video_list(
-        "Engellenmiş Videolar",
-        service.list_videos_by_status(VideoStatus.BLOCKED)
+    print_videos(
+        "Engellenmis Videolar",
+        service.list_blocked()
+    )
+
+    service.change_visibility(video1.video_id, VideoVisibility.PRIVATE)
+
+    print_videos(
+        "Private Videolar",
+        service.list_by_visibility(VideoVisibility.PRIVATE)
+    )
+
+    paged = service.paginate(page=1, page_size=2)
+    print_videos("Sayfalama Sonucu", paged)
+
+    sorted_by_title = service.sort_by_title()
+    print_videos("Basliga Gore Sirali", sorted_by_title)
+
+    service.unpublish_video(video1.video_id)
+
+    print_videos(
+        "Processing Durumundaki Videolar",
+        service.list_processing()
     )
 
 

@@ -11,19 +11,19 @@ class VideoService:
 
     def upload_video(self, video: VideoBase) -> None:
         if not video.is_valid():
-            raise ValueError("Invalid video")
+            raise ValueError("Geçersiz video")
         self.repository.save(video)
 
     def start_processing(self, video_id: str) -> None:
         video = self._get(video_id)
         if video.status != VideoStatus.UPLOADED:
-            raise RuntimeError("Invalid state")
+            raise RuntimeError("Geçersiz state")
         video.process()
 
     def publish_video(self, video_id: str) -> None:
         video = self._get(video_id)
         if video.status != VideoStatus.PROCESSING:
-            raise RuntimeError("Invalid state")
+            raise RuntimeError("Geçersiz state")
         video.publish()
 
     def process_and_publish(self, video_id: str) -> None:
@@ -36,7 +36,7 @@ class VideoService:
     def unpublish_video(self, video_id: str) -> None:
         video = self._get(video_id)
         if video.status != VideoStatus.PUBLISHED:
-            raise RuntimeError("Invalid state")
+            raise RuntimeError("Geçersiz state")
         video.unpublish()
 
     def block_video(self, video_id: str) -> None:
@@ -160,5 +160,5 @@ class VideoService:
     def _get(self, video_id: str) -> VideoBase:
         video = self.repository.find_by_id(video_id)
         if not video:
-            raise LookupError("Video not found")
+            raise LookupError("Video yok")
         return video

@@ -1,75 +1,120 @@
 from abc import ABC, abstractmethod
+from enum import Enum
+from uuid import uuid4
 from datetime import datetime
-import uuid
+from typing import Optional
+
+
+class VideoVisibility(Enum):
+    PUBLIC = "public"
+    PRIVATE = "private"
+    UNLISTED = "unlisted"
+
+
+class VideoStatus(Enum):
+    UPLOADED = "uploaded"
+    PROCESSING = "processing"
+    PUBLISHED = "published"
+    BLOCKED = "blocked"
 
 
 class VideoBase(ABC):
-
-    VALID_VISIBILITIES = {"public", "private", "unlisted"}
-    VALID_STATUSES = {"uploaded", "processing", "published", "blocked", "removed"}
-
-    def __init__(self, video_id, channel_id, title, duration_seconds, visibility, status):
-        self.video_id = video_id
+    def __init__(
+        self,
+        channel_id: str,
+        title: str,
+        duration_seconds: int,
+        visibility: VideoVisibility = VideoVisibility.PUBLIC
+    ):
+        self.video_id = str(uuid4())
         self.channel_id = channel_id
         self.title = title
         self.duration_seconds = duration_seconds
         self.visibility = visibility
-        self.status = status
-        self.upload_date = datetime.now()
-        self.last_updated = datetime.now()
+        self.status = VideoStatus.UPLOADED
+        self.created_at = datetime.now()
+        self.updated_at = self.created_at
+        self.last_watched_at: Optional[datetime] = None
+        self.has_subtitles = False
+        self.tags: list[str] = []
 
-    def process(self):
-        if self.status == "uploaded":
-            self.status = "processing"
+    def validate_duration(self) -> bool:
+        return self.duration_seconds > 0
 
-    def publish(self):
-        if self.status == "processing":
-            self.status = "published"
+    def add_tag(self, tag: str) -> None:
+        if tag not in self.tags:
+            self.tags.append(tag)
 
-    def block(self):
-        self.status = "blocked"
+    def remove_tag(self, tag: str) -> None:
+        if tag in self.tags:
+            self.tags.remove(tag)
 
-    def unpublish(self):
-        if self.status == "published":
-            self.status = "processing"
+    def process(self) -> None:
+        if self.status == VideoStatus.UPLOADED:
+            self.status = VideoStatus.PROCESSING
+            self.updated_at = datetime.now()
 
-    def change_visibility(self, visibility):
-        if visibility in self.VALID_VISIBILITIES:
-            self.visibility = visibility
+    def publish(self) -> None:
+        if self.status == VideoStatus.PROCESSING:
+            self.status = VideoStatus.PUBLISHED
+            self.updated_at = datetime.now()
+
+    def unpublish(self) -> None:
+        if self.status == VideoStatus.PUBLISHED:
+            self.status = VideoStatus.PROCESSING
+            self.updated_at = datetime.now()
+
+    def block(self) -> None:
+        self.status = VideoStatus.BLOCKED
+        self.updated_at = datetime.now()
+
+    def mark_watched(self) -> None:
+        self.last_watched_at = datetime.now()
+
+    def enable_subtitles(self) -> None:
+        self.has_subtitles = True
+
+    def disable_subtitles(self) -> None:
+        self.has_subtitles = False
+
+    def change_visibility(self, visibility: VideoVisibility) -> None:
+        self.visibility = visibility
+        self.updated_at = datetime.now()
+
+    def is_public(self) -> bool:
+        return self.visibility == VideoVisibility.PUBLIC
+
+    def is_blocked(self) -> bool:
+        return self.status == VideoStatus.BLOCKED
+
+    def is_published(self) -> bool:
+        return self.status == VideoStatus.PUBLISHED
+
+    def is_processing(self) -> bool:
+        return self.status == VideoStatus.PROCESSING
+
+    def is_uploaded(self) -> bool:
+        return self.status == VideoStatus.UPLOADED
+
+    def age_in_seconds(self) -> int:
+        return int((datetime.now() - self.created_at).total_seconds())
 
     @abstractmethod
-    def get_video_type(self):
-        pass
+    def get_video_type(self) -> str:
+        ...
 
     @abstractmethod
-    def validate_duration(self):
-        pass
+    def validate_specific_rules(self) -> bool:
+        ...
 
-    def _touch(self):
-        self.last_updated = datetime.now()
+    def is_valid(self) -> bool:
+        return self.validate_duration() and self.validate_specific_rules()
 
-    def is_public(self):
-        return self.visibility == "public"
-
-    def is_blocked(self):
-        return self.status == "blocked"
-
-    def can_be_published(self):
-        return self.status == "processing"
-
-    @classmethod
-    def allowed_visibilities(cls):
-        return list(cls.VALID_VISIBILITIES)
-
-    @staticmethod
-    def generate_video_id():
-        return str(uuid.uuid4())
-
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
-            f"<{self.get_video_type()} | "
-            f"id={self.video_id} | "
-            f"title='{self.title}' | "
-            f"status={self.status}>"
-       )
-
+            f"<{self.get_video_type()} "
+            f"id={self.video_id} "
+            f"title='{self.title}' "
+            f"status={self.status.value} "
+            f"visibility={self.visibility.value}>"
+        )

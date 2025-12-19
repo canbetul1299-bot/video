@@ -39,7 +39,7 @@ def main():
 
     live_video = LiveStreamVideo(
         channel_id="channel_2",
-        title="Canlı Python Yayını",
+        title="Canli Python Yayini",
         scheduled_time=datetime.now() + timedelta(hours=2)
     )
 
@@ -52,3 +52,45 @@ def main():
     service.process_and_publish(short_video.video_id)
 
     live_video.start_stream()
+
+    all_videos = repository.find_all()
+
+    print_video_list(
+        "Tüm Videolar (Polimorfik Liste)",
+        all_videos
+    )
+
+    print_video_list(
+        "Yayindaki Videolar",
+        service.list_videos_by_status(VideoStatus.PUBLISHED)
+    )
+
+    print_video_list(
+        "Public Videolar",
+        service.list_public_videos()
+    )
+
+    print_video_list(
+        "Channel 1 Videoları",
+        service.list_videos_by_channel("channel_1")
+    )
+
+
+    start = datetime.now() - timedelta(days=1)
+    end = datetime.now() + timedelta(days=1)
+
+    print_video_list(
+        "Bugün Yüklenen Videolar",
+        service.list_videos_by_date_range(start, end)
+    )
+
+    service.block_video(short_video.video_id)
+
+    print_video_list(
+        "Engellenmiş Videolar",
+        service.list_videos_by_status(VideoStatus.BLOCKED)
+    )
+
+
+if __name__ == "__main__":
+    main()

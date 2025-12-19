@@ -19,22 +19,22 @@ def main():
     service = VideoService(repository)
 
     video1 = StandardVideo(
-        channel_id="channel_1",
-        title="Python OOP Dersleri",
+        channel_id="kanal_1",
+        title="Python NYP Dersleri",
         duration_seconds=900,
         has_subtitles=True
     )
 
     video2 = ShortVideo(
-        channel_id="channel_1",
-        title="Python İpucu",
+        channel_id="kanal_1",
+        title="Pythonss",
         duration_seconds=45,
         music_used=True
     )
 
     video3 = LiveStreamVideo(
-        channel_id="channel_2",
-        title="Canlı Python Yayını",
+        channel_id="kanal_2",
+        title="Canli python yayini",
         scheduled_time=datetime.now() + timedelta(hours=1)
     )
 
@@ -50,7 +50,7 @@ def main():
     video3.disable_chat()
 
     service.add_tag(video1.video_id, "python")
-    service.add_tag(video1.video_id, "oop")
+    service.add_tag(video1.video_id, "nyp")
     service.add_tag(video2.video_id, "shorts")
 
     service.mark_video_watched(video1.video_id)
@@ -59,27 +59,27 @@ def main():
     print_videos("Tum Videolar", service.list_all())
     print_videos("Public Videolar", service.list_public())
     print_videos("Yayindaki Videolar", service.list_by_status(VideoStatus.PUBLISHED))
-    print_videos("Channel 1 Videolari", service.list_by_channel("channel_1"))
+    print_videos("Kanal 1 Videolari", service.list_by_channel("kanal_1"))
 
     start = datetime.now() - timedelta(days=1)
     end = datetime.now() + timedelta(days=1)
 
     print_videos(
-        "Bugun Yuklenen Videolar",
+        
         service.list_uploaded_between(start, end)
     )
 
     service.block_video(video2.video_id)
 
     print_videos(
-        "Engellenmis Videolar",
+        
         service.list_blocked()
     )
 
     service.change_visibility(video1.video_id, VideoVisibility.PRIVATE)
 
     print_videos(
-        "Private Videolar",
+        
         service.list_by_visibility(VideoVisibility.PRIVATE)
     )
 
@@ -87,12 +87,12 @@ def main():
     print_videos("Sayfalama Sonucu", paged)
 
     sorted_by_title = service.sort_by_title()
-    print_videos("Basliga Gore Sirali", sorted_by_title)
+    print_videos("Basliga göre sirali", sorted_by_title)
 
     service.unpublish_video(video1.video_id)
 
     print_videos(
-        "Processing Durumundaki Videolar",
+        
         service.list_processing()
     )
 

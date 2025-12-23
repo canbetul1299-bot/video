@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, List
 
-from Video.base import (
+from base import (
      VideoBase,
      VideoStatus,
      VideoVisibility

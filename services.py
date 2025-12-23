@@ -1,8 +1,9 @@
 from datetime import datetime
 from typing import List, Optional
 
-from video.base import VideoBase, VideoStatus, VideoVisibility
-from video.repository import VideoRepository
+from base import VideoBase, VideoStatus, VideoVisibility
+from repository import VideoRepository
+
 
 
 class VideoService:

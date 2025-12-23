@@ -2,14 +2,14 @@
 import unittest
 from datetime import datetime, timedelta
 
-from video.base import VideoStatus, VideoVisibility
-from video.implementations import (
+from base import VideoStatus, VideoVisibility
+from implementations import (
     StandardVideo,
     ShortVideo,
     LiveStreamVideo
 )
-from video.repository import VideoRepository
-from video.services import VideoService
+from repository import VideoRepository
+from services import VideoService
 
 
 class TestVideoCreation(unittest.TestCase):

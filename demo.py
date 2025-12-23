@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
 from random import randint
 
-from video.repository import VideoRepository
-from video.services import VideoService
-from video.implementations import StandardVideo, ShortVideo, LiveStreamVideo
-from video.base import VideoVisibility, VideoStatus
+from repository import VideoRepository
+from services import VideoService
+from implementations import StandardVideo, ShortVideo, LiveStreamVideo
+from base import VideoVisibility, VideoStatus
 
 
 def print_header(title):

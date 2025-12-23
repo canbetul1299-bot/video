@@ -29,10 +29,15 @@ class VideoService:
 
     def process_and_publish(self, video_id: str) -> None:
         video = self._get(video_id)
+        if video.status == VideoStatus.BLOCKED:
+            raise RuntimeError("Bloklu video yayınlanamaz")
+
         if video.status == VideoStatus.UPLOADED:
             video.process()
+
         if video.status == VideoStatus.PROCESSING:
             video.publish()
+
 
     def unpublish_video(self, video_id: str) -> None:
         video = self._get(video_id)

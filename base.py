@@ -147,10 +147,14 @@ class VideoBase(ABC):
 
     def is_valid(self) -> bool:
         if not self.title:
+          return False
+
+        if self.get_video_type() != "LiveStreamVideo":
+          if self.duration_seconds <= 0:
             return False
-        if self.duration_seconds < 0:
-            return False
+
         return self.validate_specific_rules()
+
 
     def update_title(self, title: str) -> None:
         self.title = title

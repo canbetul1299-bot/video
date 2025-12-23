@@ -52,7 +52,9 @@ class VideoRepository:
         return [
             v for v in self._videos.values()
             if v.visibility == VideoVisibility.PUBLIC
-        ]
+            and v.status == VideoStatus.PUBLISHED
+    ]
+
 
     def find_uploaded_between(
         self,
@@ -93,18 +95,20 @@ class VideoRepository:
 
         return result
 
-    def paginate(
-        self,
-        page: int,
-        page_size: int
-    ) -> List[VideoBase]:
+    def paginate(self, page: int, page_size: int) -> List[VideoBase]:
         if page < 1 or page_size < 1:
-            return []
+          return []
+
+        sorted_videos = sorted(
+           self._videos.values(),
+           key=lambda v: v.created_at
+    )
 
         start = (page - 1) * page_size
         end = start + page_size
 
-        return list(self._videos.values())[start:end]
+        return sorted_videos[start:end]
+
 
     def sort_by_title(self) -> List[VideoBase]:
         return sorted(

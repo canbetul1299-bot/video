@@ -21,19 +21,18 @@ def print_videos(videos):
 def create_standard_videos(service, count):
     videos = []
     for i in range(count):
-        
         v = StandardVideo(
-           channel_id="std_channel",
-           title=f"Standard Video {i}",
-           duration_seconds=600 + i * 10,
-           has_subtitles=i % 2 == 0,
-           visibility=VideoVisibility.PUBLIC
+            channel_id="std_channel",
+            title=f"Standard Video {i}",
+            duration_seconds=600 + i * 10,
+            has_subtitles=i % 2 == 0,
+            visibility=VideoVisibility.PUBLIC
         )
 
         service.upload_video(v)
-        
+
         if i % 2 == 0:
-           service.process_and_publish(v.video_id)
+            service.process_and_publish(v.video_id)
 
         videos.append(v)
 
@@ -43,18 +42,20 @@ def create_standard_videos(service, count):
 def create_short_videos(service, count):
     videos = []
     for i in range(count):
-       
         v = ShortVideo(
-           channel_id="short_channel",
-           title=f"Short Video {i}",
-           duration_seconds=randint(10, 60),
-           music_used=i % 3 == 0,
-           visibility=VideoVisibility.PUBLIC
+            channel_id="short_channel",
+            title=f"Short Video {i}",
+            duration_seconds=randint(10, 60),
+            music_used=i % 3 == 0,
+            visibility=VideoVisibility.PUBLIC
         )
 
         service.upload_video(v)
         service.process_and_publish(v.video_id)
-        
+
+        v.increment_views(randint(10, 500))
+        v.increment_shares(randint(0, 50))
+
         videos.append(v)
 
     return videos
@@ -63,15 +64,15 @@ def create_short_videos(service, count):
 def create_live_videos(service, count):
     videos = []
     for i in range(count):
-       
         v = LiveStreamVideo(
-           channel_id="live_channel",
-           title=f"Live Stream {i}",
-           scheduled_time=datetime.now() + timedelta(hours=i),
-           visibility=VideoVisibility.PUBLIC
+            channel_id="live_channel",
+            title=f"Live Stream {i}",
+            scheduled_time=datetime.now() + timedelta(hours=i),
+            visibility=VideoVisibility.PUBLIC
         )
 
         service.upload_video(v)
+
         if i % 2 == 0:
             v.start_stream()
 
@@ -195,3 +196,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

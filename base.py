@@ -1,8 +1,10 @@
+import uuid
 from abc import ABC, abstractmethod
 from enum import Enum
 from uuid import uuid4
 from datetime import datetime
 from typing import Optional
+
 
 
 class VideoVisibility(Enum):
@@ -19,6 +21,11 @@ class VideoStatus(Enum):
 
 
 class VideoBase(ABC):
+
+    @staticmethod
+    def generate_video_id() -> str:
+        return str(uuid.uuid4())
+
     def __init__(
         self,
         channel_id: str,

@@ -1,3 +1,6 @@
+
+print(">>> implementations.py YÜKLENDİ <<<")
+
 from datetime import datetime
 from typing import Optional, List
 
@@ -24,7 +27,7 @@ class StandardVideo(VideoBase): # Klasik, önceden kaydedilmiş videolar.
             title=title,
             duration_seconds=duration_seconds,
             visibility=visibility,
-            status=VideoStatus.uploaded
+            status=VideoStatus.UPLOADED
         )
 
         self.resolution = resolution
@@ -67,7 +70,7 @@ class LiveStreamVideo(VideoBase): # Canlı yayın videoları.
             title=title,
             duration_seconds=0,
             visibility=visibility,
-            status=VideoStatus.uploaded
+            status=VideoStatus.UPLOADED
         )
 
         self.scheduled_time = scheduled_time
@@ -89,14 +92,14 @@ class LiveStreamVideo(VideoBase): # Canlı yayın videoları.
         if not self.is_live:
             self.is_live = True
             self.started_at = datetime.now()
-            self.status = VideoStatus.published
+            self.status = VideoStatus.PUBLISHED
 
     def end_stream(self, final_duration: int) -> None:
         if self.is_live:
             self.is_live = False
             self.ended_at = datetime.now()
             self.duration_seconds = final_duration
-            self.status = VideoStatus.processing
+            self.status = VideoStatus.PROCESSING
 
     def is_scheduled(self) -> bool:
         return self.scheduled_time is not None
@@ -121,7 +124,7 @@ class ShortVideo(VideoBase): # Shorts videolar.
             title=title,
             duration_seconds=duration_seconds,
             visibility=visibility,
-            status=VideoStatus.uploaded
+            status=VideoStatus.UPLOADED
         )
 
         self.is_vertical = is_vertical

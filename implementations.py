@@ -22,12 +22,12 @@ class StandardVideo(VideoBase): # Klasik, önceden kaydedilmiş videolar.
         has_subtitles: bool = False
     ):
         super().__init__(
-            video_id=VideoBase.generate_video_id(),
+        
             channel_id=channel_id,
             title=title,
             duration_seconds=duration_seconds,
             visibility=visibility,
-            status=VideoStatus.UPLOADED
+            
         )
 
         self.resolution = resolution
@@ -65,12 +65,12 @@ class LiveStreamVideo(VideoBase): # Canlı yayın videoları.
         scheduled_time: Optional[datetime] = None
     ):
         super().__init__(
-            video_id=VideoBase.generate_video_id(),
+            
             channel_id=channel_id,
             title=title,
             duration_seconds=0,
             visibility=visibility,
-            status=VideoStatus.UPLOADED
+            
         )
 
         self.scheduled_time = scheduled_time
@@ -119,12 +119,12 @@ class ShortVideo(VideoBase): # Shorts videolar.
         music_used: bool = False
     ):
         super().__init__(
-            video_id=VideoBase.generate_video_id(),
+            
             channel_id=channel_id,
             title=title,
             duration_seconds=duration_seconds,
             visibility=visibility,
-            status=VideoStatus.UPLOADED
+            
         )
 
         self.is_vertical = is_vertical

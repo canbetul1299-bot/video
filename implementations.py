@@ -39,7 +39,8 @@ class StandardVideo(VideoBase): # Klasik, önceden kaydedilmiş videolar.
     def validate_duration(self) -> bool:
         return self.duration_seconds >= 10
 
-   
+    def validate_specific_rules(self) -> bool:
+        return self.duration_seconds >= 60
 
     def mark_watched(self) -> None:
         self.last_watched_at = datetime.now()
@@ -81,7 +82,8 @@ class LiveStreamVideo(VideoBase): # Canlı yayın videoları.
     def validate_duration(self) -> bool:
         return True
 
-    
+    def validate_specific_rules(self) -> bool:
+        return self.scheduled_time is not None
 
     def start_stream(self) -> None:
         if not self.is_live:
@@ -134,7 +136,8 @@ class ShortVideo(VideoBase): # Shorts videolar.
     def validate_duration(self) -> bool:
         return 0 < self.duration_seconds <= self.MAX_DURATION
 
-  
+    def validate_specific_rules(self) -> bool:
+        return self.duration_seconds <= 60
 
     def increment_loop(self) -> None:
         self.loop_count += 1

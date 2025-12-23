@@ -1,5 +1,4 @@
 
-print(">>> implementations.py YÜKLENDİ <<<")
 
 from datetime import datetime
 from typing import Optional, List

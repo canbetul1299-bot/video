@@ -167,6 +167,20 @@ class VideoBase(ABC):
         self.rating_total = 0
         self.rating_count = 0
 
+    def increment_views(self, count: int = 1) -> None:
+        if count > 0:
+            self.view_count += count
+            self.updated_at = datetime.now()
+    
+    def increment_shares(self, count: int = 1) -> None:
+        if count > 0:
+            self.metadata["shares"] = str(
+            int(self.metadata.get("shares", "0")) + count
+        )
+            self.updated_at = datetime.now()
+
+
+
     def to_dict(self) -> dict:
         return {
             "video_id": self.video_id,

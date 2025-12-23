@@ -148,7 +148,7 @@ class VideoBase(ABC):
     def is_valid(self) -> bool:
         if not self.title:
             return False
-        if self.duration_seconds <= 0:
+        if self.duration_seconds < 0:
             return False
         return self.validate_specific_rules()
 
@@ -177,7 +177,7 @@ class VideoBase(ABC):
             self.metadata["shares"] = str(
             int(self.metadata.get("shares", "0")) + count
         )
-            self.updated_at = datetime.now()
+        self.updated_at = datetime.now()
 
 
 

@@ -45,7 +45,7 @@ class StandardVideo(VideoBase): # Klasik, önceden kaydedilmiş videolar.
         return self.duration_seconds >= 60
 
     def mark_watched(self) -> None:
-        self.last_watched_at = datetime.now()
+        super().mark_watched()
 
     def enable_subtitles(self) -> None:
         self.has_subtitles = True
@@ -60,9 +60,10 @@ class LiveStreamVideo(VideoBase): # Canlı yayın videoları.
         self,
         channel_id: str,
         title: str,
-        visibility: VideoVisibility,
-        scheduled_time: Optional[datetime] = None
-    ):
+        scheduled_time: datetime,
+        visibility: VideoVisibility = VideoVisibility.PUBLIC
+):
+
         super().__init__(
             
             channel_id=channel_id,
@@ -139,7 +140,7 @@ class ShortVideo(VideoBase): # Shorts videolar.
         return 0 < self.duration_seconds <= self.MAX_DURATION
 
     def validate_specific_rules(self) -> bool:
-        return self.duration_seconds <= 60
+        return self.validate_duration()
 
     def increment_loop(self) -> None:
         self.loop_count += 1

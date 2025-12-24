@@ -176,6 +176,7 @@ def main():
     print_header("VISIBILITY LIST")
     print(service.visibilities())
 
+
     for v in standard_videos:
         service.add_tag(v.video_id, "education")
         service.add_tag(v.video_id, "python")

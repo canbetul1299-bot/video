@@ -5,13 +5,13 @@ from uuid import uuid4
 from enum import Enum
 
 
-class VideoVisibility(Enum):
+class VideoVisibility(Enum):  
     PUBLIC = "public"
     PRIVATE = "private"
     UNLISTED = "unlisted"
 
 
-class VideoStatus(Enum):
+class VideoStatus(Enum): 
     UPLOADED = "uploaded"
     PROCESSING = "processing"
     PUBLISHED = "published"
@@ -21,8 +21,16 @@ class VideoStatus(Enum):
 class VideoBase(ABC):
 
     @staticmethod
-    def generate_video_id() -> str:
+    def generate_video_id() -> str:  
         return str(uuid4())
+    
+    @classmethod
+    def create_dummy(cls, channel_id, title, duration_seconds):
+        return cls(
+            channel_id=channel_id,
+            title=title,
+            duration_seconds=duration_seconds
+        )
 
     def __init__(
         self,
@@ -54,12 +62,12 @@ class VideoBase(ABC):
 
         self.metadata: dict[str, str] = {}
 
-    def process(self) -> None:
+    def process(self) -> None:   
         if self.status == VideoStatus.UPLOADED:
             self.status = VideoStatus.PROCESSING
             self.updated_at = datetime.now()
 
-    def publish(self) -> None:
+    def publish(self) -> None:    
         if self.status == VideoStatus.PROCESSING:
             self.status = VideoStatus.PUBLISHED
             self.updated_at = datetime.now()
@@ -69,7 +77,7 @@ class VideoBase(ABC):
             self.status = VideoStatus.PROCESSING
             self.updated_at = datetime.now()
 
-    def block(self) -> None:
+    def block(self) -> None:      
         self.status = VideoStatus.BLOCKED
         self.updated_at = datetime.now()
 
